@@ -71,7 +71,7 @@ var filterPage = function (startIndex, endIndex, success,address) {
 var findMailAddress = function (callback) {
     var mailAddress = [];
     var fun = (i) => {
-        var url = "http://www.cnblogs.com/mvc/blog/GetComments.aspx?postId=7326178&blogApp=kklldog&anchorCommentId=0&pageIndex=";
+        var url = "http://www.cnblogs.com/mvc/blog/GetComments.aspx?postId=7337141&blogApp=kklldog&anchorCommentId=0&pageIndex=";
         myhttp.get(url + i, (res) => {
             var body = res.body;
             var bodyObj = JSON.parse(body);
