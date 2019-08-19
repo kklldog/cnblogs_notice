@@ -38,7 +38,7 @@ var trySendMail = function (url, name,address) {
 
             var bodyHmtl = JSON.stringify(mail);
             console.log(bodyHmtl);
-            myhttp.post('http://localhost:3200/cnblogsnotice', bodyHmtl, false, (res) => {
+            myhttp.post('http://mail_service:3200/cnblogsnotice', bodyHmtl, false, (res) => {
                 console.log(res.body);
 
                 db.insert('cnblogsnotice', { url: url });

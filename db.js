@@ -6,7 +6,7 @@ var MongoClient = require('mongodb').MongoClient;
 var db;
 
 var init = function () {
-    MongoClient.connect("mongodb://localhost:27017/pingcheji", (err, database) => {
+    MongoClient.connect("mongodb://mongodb:27017/pingcheji", (err, database) => {
         if (err) {
             console.error(err);
             return;
