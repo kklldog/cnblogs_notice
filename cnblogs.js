@@ -27,6 +27,7 @@ var successCallback = function (body, mailAddress) {
 }
 
 var trySendMail = function (url, name,address) {
+    console.log('try send mail , '+url);
     db.find('cnblogsnotice', { url: url }, function (row) {
         if (row.length == 0) {
             //send mail
@@ -53,10 +54,10 @@ var trySendMail = function (url, name,address) {
 var filterPage = function (startIndex, endIndex, success,address) {
     if (startIndex > endIndex) return;
 
-    var url = 'https://www.cnblogs.com/mvc/AggSite/PostList.aspx';
-    var postBody = { "CategoryType": "SiteHome", "ParentCategoryId": 0, "CategoryId": 808, "PageIndex": startIndex, "TotalPostCount": 4000, "ItemListActionName": "PostList" };
+    var url = 'https://www.cnblogs.com/aggsite/topviews#p';
 
-    myhttp.post(url, postBody, true, (res) => {
+    myhttp.get(url+startIndex, (res) => {
+        console.log(url+startIndex);
         success(res.body,address);
         if (startIndex <= endIndex) {
             var nextIndex = startIndex + 1;
@@ -67,23 +68,29 @@ var filterPage = function (startIndex, endIndex, success,address) {
     }, 3);
 
 }
-
+function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
 var findMailAddress = function (callback) {
     var mailAddress = [];
     var fun = (i) => {
-        var url = "http://www.cnblogs.com/mvc/blog/GetComments.aspx?postId=7337667&blogApp=kklldog&anchorCommentId=0&pageIndex=";
+        var url = "https://www.cnblogs.com/kklldog/ajax/GetComments.aspx?postId=7337667&anchorCommentId=0&pageIndex=";
         myhttp.get(url + i, (res) => {
             var body = res.body;
-            var bodyObj = JSON.parse(body);
-            var $ = cheerio.load(bodyObj.commentsHtml);
+            console.info(url+i);
+            //console.info(body);
+            //var bodyObj = JSON.parse(body);
+            var $ = cheerio.load(body);
             var comments = $('div.blog_comment_body');
             if (comments.length > 0) {
                 comments.each((i, e) => {
                     var comment = $(e).text();
-                    var MAIL_REGEXP = /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/;
-                    if(MAIL_REGEXP.test(comment)){
+                    comment = comment.replace(/\n/g,"");
+                    comment = comment.replace(/\s/g,"");
+                    if(validateEmail(comment)){
                         mailAddress.push(comment);
-                        console.log(comment);
+                        console.info(comment);
                     }
                 });
                 fun(i + 1);
